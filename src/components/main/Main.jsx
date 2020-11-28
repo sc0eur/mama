@@ -71,22 +71,33 @@ const Main = (props) => {
     props.history.push(token);
   }
 
-  const loadLabelMessages = (label) => {
+  const loadLabelMessages = (label, listOfGoodLabels) => {
     const currentSearchQuery = props.searchQuery;
     props.clearPageTokens();
     props.selectLabel(label.id);
 
     const newPathToPush = `/${label.id.toLowerCase()}`;
 
-    if (currentSearchQuery && currentSearchQuery !== "") {
+    // if (currentSearchQuery && currentSearchQuery !== "") {
       props.setSearchQuery("");
       const {pathname} = props.location;
-      if (newPathToPush === pathname) {
-        getLabelMessages({labelIds: [label.id] });
+      // if (newPathToPush === pathname) {
+        // let listOfGoodLabels = 'чудолог';
+        // console.log('loadLabelMessages')
+        // console.log(label.id)
+        let labelIds = [label.id]
+        // console.log(labelIds)
+        if (labelIds[0].length == 0){
+          labelIds = ['INBOX']
+        }
+        let q = ''
+        let pageToken = ''
+        getLabelMessages({ labelIds, q, pageToken ,listOfGoodLabels});
         // console.log(getLabelMessages({labelIds: [label.id] }));
+        // props.history.push(`/${label.id.toLowerCase()}`);
         return;
-      }
-    }
+      // }
+    // }
 
     props.history.push(`/${label.id.toLowerCase()}`);
   }
@@ -96,9 +107,13 @@ const Main = (props) => {
     props.getLabels();
   }
 
-  const getLabelMessages = ({ labelIds, q, pageToken }) => {
+  const getLabelMessages = ({ labelIds, q, pageToken ,listOfGoodLabels}) => {
     props.emptyLabelMessages();
-    props.getLabelMessages({labelIds, q, pageToken});
+    // let listOfGoodLabels = 'чудолог';
+    // console.log('getLabelMessages')
+    // console.log(listOfGoodLabels)
+    // console.log(listOfGoodLabels)
+    props.getLabelMessages({labelIds, q, pageToken,listOfGoodLabels});
   }
 
 
@@ -154,6 +169,7 @@ const Main = (props) => {
       return renderSpinner();
     }
     // console.log(props)
+    // console.log(props.googleUser)
     return (
       <Fragment>
         <Header googleUser={props.googleUser}
@@ -164,6 +180,7 @@ const Main = (props) => {
         />
         <section className="main hbox space-between">
           <Sidebar
+            googleUser={props.googleUser}
             getLabelList={getLabelList}
             pathname={props.location.pathname}
             labelsResult={props.labelsResult}

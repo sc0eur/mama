@@ -3,7 +3,7 @@ import "./header.scss";
 import {getMessageListReq} from "../../api/index.jsx"
 import Signout from "../signout/Signout";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faQuestion, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import debounce from "lodash/debounce";
 // import { render } from "node-sass";
@@ -13,10 +13,18 @@ import debounce from "lodash/debounce";
 class Header extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {value: ''};
+    this.state = {displayProp: 'none', anыwer: ''};
+    // const [displayProp, setDisplayProp] = useState('none');
 
     this.handleChange = (event) => this.setState({value: event.target.value});
     this.handleSubmit = handleSubmitFunction
+    this.closeAnswer = closeAnswerFunction
+
+
+    function closeAnswerFunction() {
+      // this.setState({displayProp: 'none', answer: ''})
+      this.setState({displayProp: 'none', answer: ''})
+    }
 
     // handleChange(event) {
     //   this.setState({value: event.target.value});
@@ -26,10 +34,12 @@ class Header extends React.Component {
     // const [askQuery, setAskQuery] = useState('');
 
     function handleSubmitFunction(question) {
-      console.log(question.toString());
-      const maxResults = 2;
+      
+      const maxResults = 5;
       let q = '';
-      getMessageListReq( { question, maxResults , q} ).then(response => console.log(response));
+      // const [answ, setAnsw] = useState('kjh')
+      getMessageListReq( { question, maxResults , q} ).then(response => this.setState({displayProp: '', answer: response}));
+      console.log(this.state.answer)
     }
 
     const handleSearchClick = (evt) => {
@@ -51,28 +61,22 @@ class Header extends React.Component {
       props.getLabelMessages({...searchParams})
     }, 1000);
 
-    // console.log(props.googleUser)
     const userInfo = props.googleUser.wt;
     const email = userInfo.cu;
     const fullName = userInfo.Ad;
     const picUrl = userInfo.hK;
-    // console.log(fullName)
 
-  // console.log(props)
+
+
   }
-
-
-  // console.log(userInfo)
-
-
-
 
   render() {
     return (
       <header className="d-flex p-3 align-content-center align-items-center header">
         <div className="header-logo justify-content-center">
-          <Link to="/inbox">MAMA</Link>
+          <Link to="/inbox"><img style = {{width: '100px'}} src={require("./Logo.png")} /></Link>
         </div>
+        
 
         <div className="header-search">
           <div className="input-group w-75 ml-1 mr-auto">
@@ -108,6 +112,24 @@ class Header extends React.Component {
                 <FontAwesomeIcon icon={faSearch} />
               </button>
             </div> */}
+            <div style={{
+              background: 'white', 
+              padding: '1rem',
+              width: "100%", 
+              position: 'absolute', 
+              zIndex:'1000', 
+              top: '3rem', 
+              display: this.state.displayProp,
+              borderRadius: "10px",
+              border:  '1px solid',
+              color: 'black',
+              textAlign: "center"
+              }}>
+              {this.state.answer}
+              <button onClick = {this.closeAnswer.bind(this)} style = {{border: '0px', background: '#00000000', position: 'absolute', top: 0, right:0}}>
+                <FontAwesomeIcon icon={faTimes} />
+              </button>
+            </div>
           </div>
           <div>
             <span className="user-name" title={this.props.googleUser.wt.cu}>

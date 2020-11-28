@@ -13,6 +13,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { getMessageForSumm } from "../../api/index.jsx"
+
 import ReactQuill from "react-quill";
 import "../../../node_modules/react-quill/dist/quill.snow.css";
 import "./composeMessage.scss";
@@ -74,7 +75,7 @@ const Compose = (props) => {
 
     closeModal();
   }
-  // console.log(props.content)
+
   const resetFields = () => {
     setState({
       to: props.to || "",
@@ -97,8 +98,6 @@ const Compose = (props) => {
     const fieldValue = state[field].trim();
     return fieldValue.length > 0 && !getValidEmails(fieldValue).length;
   }
-  // useEffect(() => , []);
-  // console.log(props)
 
   useEffect(() => {
     getMessageForSumm(props.plain).then(resp =>{
@@ -210,5 +209,4 @@ const Compose = (props) => {
   );
 }
 
-
-export default Compose
+export default Compose;

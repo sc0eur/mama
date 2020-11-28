@@ -9,4 +9,4 @@ RUN python3 -c "import spacy; spacy.load('en_use_md')"
 RUN python3 app/models/download_models.py
 
 EXPOSE 8000
-CMD ["python3", "-u", "app/main.py"]
+CMD ["python3", "-u", "main.py"]

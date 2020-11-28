@@ -18,10 +18,13 @@ export const MODIFY_MESSAGES_SUCCESS = "MODIFY_MESSAGES_SUCCESS";
 export const MODIFY_MESSAGES_FAILED = "MODIFY_MESSAGES_FAILED";
 export const SET_SEARCH_QUERY = "SET_SEARCH_QUERY";
 
+var _ = require('lodash');
+
 export const getLabelMessages = ({
   labelIds,
   q = "",
-  pageToken
+  pageToken,
+  listOfGoodLabels
 }) => (dispatch, getState) => {
   dispatch(setMessageListLoadInProgress());
 
@@ -32,12 +35,44 @@ export const getLabelMessages = ({
     dispatch(selectLabel("-1"));
   }
 
-  getMessageList({ labelIds, maxResults: 20, q: searchQuery, pageToken }).then(response => {
-    dispatch({
-      type: GET_MESSAGES,
-      payload: response
-    });
+  getMessageList({ labelIds, maxResults: 20, q: searchQuery, pageToken, listOfGoodLabels }).then(response => {
+  // getMessageList({ labelIds, maxResults: 20, q: searchQuery, pageToken }).then(response => {
+    // console.log('тут должен быть чудолог')
+    // console.log(listOfGoodLabels)
+    // console.log('это нужный лог')
+    console.log('good labels')
+    console.log(listOfGoodLabels)
+    // console.log(response.messages)
+    // console.log('корень')
+    // console.log(labelIds)
+    // console.log(q)
+    // console.log(pageToken)
+    // console.log(listOfGoodLabels)
+    // var res0 = _.cloneDeep(response)
+    // const res1 = res0.filter(item => (listOfGoodLabels.includes(item.messages.id)))
+    // console.log(response)
+    // console.log(response.messages)
+    // console.log(response.messages.filter(item => (listOfGoodLabels.includes(item.id))))
+    
+    // console.log(response)
 
+    // console.log('res1')
+    // console.log(res1)
+    // ТУУУУУУУУУУУУТ у нас сообщения находятся
+    if (typeof listOfGoodLabels === 'undefined') {
+      // color is undefined
+
+      dispatch({
+        type: GET_MESSAGES,
+        payload: response
+      });
+    }else {
+      response.messages = response.messages.filter(item => (listOfGoodLabels.includes(item.id)))
+      dispatch({
+        type: GET_MESSAGES,
+        payload: response
+      });
+    }
     dispatch(setPageTokens({
       nextPageToken: response.nextPageToken || ""
     }));

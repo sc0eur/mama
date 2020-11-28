@@ -46,7 +46,7 @@ export const getMessageForSumm = async (text) => {
   // console.log(wholeMailBox)
 
   // console.log(text)
-  let answer = await axios.post('http://localhost:8000/recommend/', {"text": text, "sent": wholeMailBox}).then(response => {
+  let answer = await axios.post('http://192.168.1.23:8000/recommend/', {"text": text, "sent": wholeMailBox}).then(response => {
       return response.data
   })
 
@@ -60,23 +60,83 @@ export const getMessageListReq = async ({question, maxResults, q}) => {
   const messageHeaders = await getMessageHeaders(rawList);
   const flattenedMessages = await flattenMessagesWithLabel(messageHeaders.messages, labelIds);
   const fM = flattenedMessages.messages
+
   var fmNew = await fM.map(async function(m) {
       return await getMessage(m.id)
   })
-
+  // console.log(fmNew)
   const wholeMailBox = await Promise.all(fmNew).then(values => {
-      return values.filter(m => !isHTML(m.plain)).map(
+      // console.log(values.map(m => isHTML(m.plain)))
+      return values.map(
           a => a.fromEmail + ' сказал:"'+ a.plain+'"')
           .join()
   })
 
   // console.log("sent")
   // console.log(123)
-  let answer = await axios.post('http://localhost:8000/qna/', {"context": wholeMailBox, "question": question}).then(response => {
+  let answer = await axios.post('http://192.168.1.23:8000/qna/', {"context": wholeMailBox, "question": question}).then(response => {
       return response.data
   })
 
   return answer;
+}
+
+export const getForbiddenIds = async ({maxResults,labels,userIndex}) => {
+    const pageToken = null;
+    const labelIds = ["INBOX"]
+    const q = ""
+    const rawList = await getMessageRawList({ labelIds, maxResults, pageToken, q });
+    const messageHeaders = await getMessageHeaders(rawList);
+    const flattenedMessages = await flattenMessagesWithLabel(messageHeaders.messages, labelIds);
+    const fM = flattenedMessages.messages
+
+    var fmNew = await fM.map(async function(m) {
+        return await getMessage(m.id)
+    })
+    console.log(fmNew)
+    const wholeMailBox = await Promise.all(fmNew).then(values => {
+        // console.log(values.map(m => isHTML(m.plain)))
+        return values.map(
+            a => {
+            return {
+                id: a.result.id,
+                plain: a.subject + a.result.snippet
+            }
+        })
+    })
+    let answer = await axios.post('http://192.168.1.23:8000/classify/', {"messages": wholeMailBox, "labels":labels, 'id': userIndex}).then(response => {
+        return response.data
+    })
+    return answer
+}
+
+export const getForbiddenIdsCache = async ({maxResults,labels,userIndex}) => {
+  const pageToken = null;
+  const labelIds = ["INBOX"]
+  const q = ""
+  const rawList = await getMessageRawList({ labelIds, maxResults, pageToken, q });
+  const messageHeaders = await getMessageHeaders(rawList);
+  const flattenedMessages = await flattenMessagesWithLabel(messageHeaders.messages, labelIds);
+  const fM = flattenedMessages.messages
+
+  var fmNew = await fM.map(async function(m) {
+      return await getMessage(m.id)
+  })
+  console.log(fmNew)
+  const wholeMailBox = await Promise.all(fmNew).then(values => {
+      // console.log(values.map(m => isHTML(m.plain)))
+      return values.map(
+          a => {
+          return {
+              id: a.result.id,
+              plain: a.subject + a.result.snippet
+          }
+      })
+  })
+  let answer = await axios.post('http://192.168.1.23:8000/classify_cache/', {"messages": wholeMailBox, "labels":labels, 'id': userIndex}).then(response => {
+      return response.data
+  })
+  return answer
 }
 
 export const getMessageList = async ({ labelIds, maxResults, q, pageToken }) => {
@@ -186,14 +246,29 @@ export const getMessage = async(messageId) => {
 
   const plain = getBody(result.payload, "text/plain")
   const fromEmail = result.payload.headers.filter(head => head.name=="From")[0].value
+  try{
+      const subject = result.payload.headers.filter(head => head.name=="Subject")[0].value
+      return {
+        plain,
+        subject,
+        fromEmail,
+        body,
+        headers: response.headers,
+        result: { ...result, messageHeaders: response.result.payload.headers, payload: undefined }
+      };
+  }
+  catch (e) {
+      const subject = ""
+      return {
+        plain,
+        subject,
+        fromEmail,
+        body,
+        headers: response.headers,
+        result: { ...result, messageHeaders: response.result.payload.headers, payload: undefined }
+      };
+  }
 
-  return {
-    plain,
-    fromEmail,
-    body,
-    headers: response.headers,
-    result: { ...result, messageHeaders: response.result.payload.headers, payload: undefined }
-  };
 };
 
 export const sendMessage = ({ headers, body }) => {

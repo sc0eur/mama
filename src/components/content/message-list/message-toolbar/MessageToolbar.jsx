@@ -1,7 +1,7 @@
 import React from "react";
 import ComposeMessage from "../../../compose-message/ComposeMessage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faReply } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faReply, faExclamation } from "@fortawesome/free-solid-svg-icons";
 import { getNameEmail } from "../../../../utils";
 import moment from "moment";
 import { getMessageForSumm } from "../../../../api/index.jsx"
@@ -62,19 +62,14 @@ const MessageToolbar = (props) => {
     );
   }
   const replyHeader = `<p>On ${parsedDate.format("MMMM Do YYYY, h:mm:ss a")} < ${nameEmail.email} > wrote:</p>`;
-  // const toAdd = getMessageForSumm(props.messageResult.plain).then(resp =>{
-  //     return resp
-  // });
-  // console.log(props)
+
   const composeProps = {
     plain: props.messageResult.plain,
     subject: `Re: ${subject.value}`,
     to: nameEmail.email,
     content: "",
     ...(cc && { cc: cc.value })
-    };
-
- // console.log(composeProps.content)
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center message-toolbar">
@@ -98,6 +93,16 @@ const MessageToolbar = (props) => {
               />
             </button>
           </ComposeMessage>
+        </div>
+        <div className="action-btn mr-2">
+          {/* <button className="btn" onClick={trashHandler}> */}
+          <button className="btn" onClick={props.onSummaryClick}>
+            <FontAwesomeIcon
+              title="Move to Trash"
+              icon={faExclamation}
+              size="lg"
+            />
+          </button>
         </div>
       </div>
     </div>

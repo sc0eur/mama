@@ -51,6 +51,9 @@ const AppContainer = (props) => {
     setGoogleUser(googleUser);
   }
 
+  // useEffect(()=>{
+  //   // signIn().then(onSignInSuccess);
+  // })
   const renderView = () => {
 
     if (signInStatus === AUTH_SUCCESS) {
