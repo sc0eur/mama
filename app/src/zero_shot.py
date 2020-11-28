@@ -19,7 +19,6 @@ def get_label(messages, labels = ["complaint", "meeting", "cooperation", "questi
     """Takes text as input and returns label, that has the highest score
     multi_class parameter set to True indicates, that text may belong to multiple classes
     """
-    start = clock()
     ids = dict.fromkeys(labels, 0)
     texts = []
     for i in range(len(messages)):
@@ -28,7 +27,6 @@ def get_label(messages, labels = ["complaint", "meeting", "cooperation", "questi
         # print(text)
     # scores = classifier(text, labels, hypothesis_template=hypothesis_template}})
     scores = classifier(texts, labels, multi_class=True)
-    print(scores)
     for i in range(len(scores)):
         for score, label in zip(scores[i]['scores'],scores[i]['labels']):
             if score > hold:
@@ -36,7 +34,6 @@ def get_label(messages, labels = ["complaint", "meeting", "cooperation", "questi
                     ids[label] = [messages[i]['id']]
                 else:
                     ids[label].append(messages[i]['id'])
-    print(clock()-start)
     return ids
 
     # print(scores)
