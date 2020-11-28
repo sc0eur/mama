@@ -2,7 +2,7 @@ from transformers import *
 
 # directory where models should be stored
 summary_dir = './models/qna'
-nli_dir = "./models/qna"
+nli_dir = "./models/nli"
 
 
 # if other model is wanted then you should visit https://huggingface.co/models
