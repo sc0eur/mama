@@ -1,2 +1,6 @@
-# mama
-Time Saving E-Mail Manager 
+**Как запустить**
+
+`sudo docker build -t hack .`
+
+ВНИМАНИЕ! У контейнера очень большой размер(gb).
+Будьте готовы подождать.
