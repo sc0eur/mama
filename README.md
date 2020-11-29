@@ -1,4 +1,9 @@
-**Как запустить**
+# CREDITS:
+
+GMail Client Template was taken from https://github.com/elongineer/react-gmail-client
+
+
+# Как запустить
 
 Перейти в папку с контейнером:
 
