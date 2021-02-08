@@ -2,6 +2,17 @@
 
 GMail Client Template was taken from https://github.com/elongineer/react-gmail-client
 
+# Демо продукта:
+
+https://youtu.be/KDeMx0vMhBI
+
+# Что это?
+
+Email Manager - это сохраняющий время почтовый клиент. 
+Главные его особенности это:
+* Автоматическое распределение писем по пользовательским папкам (zero-shot классификация)
+* Составление краткого содержания писем (Text Summarization)
+* Контекстные ответы на вопросы (Question Answering)
 
 # Как запустить
 
